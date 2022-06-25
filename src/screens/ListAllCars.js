@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CarDataService from "../services/carServices";
 import { Link } from "react-router-dom";
 
-const CarsList = (cars, currentCar, currentIndex) => {
+const CarsList = () => {
   const [state, setState] = useState({
     cars: [],
     currentCar: null,
@@ -17,21 +17,23 @@ const CarsList = (cars, currentCar, currentIndex) => {
     });
   };
 
-  const retrieveCars = () => {
-    CarDataService.getAll()
-      .then((response) => {
-        setState({
-          ...state,
-          cars: response.data,
-        });
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  const retrieveCars = useCallback(
+    () => {
+      CarDataService.getAll()
+        .then((response) => {
+          setState({
+            ...state,
+            cars: response.data,
+          });
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+      },
+    []);
 
-  useEffect(() => retrieveCars());
+  useEffect(() => retrieveCars(), [retrieveCars]);
 
   const refreshList = () => {
     retrieveCars();
@@ -43,7 +45,8 @@ const CarsList = (cars, currentCar, currentIndex) => {
   };
 
   const setActiveCar = (car, index) => {
-    this.setState({
+    setState({
+      ...state,
       currentCar: car,
       currentIndex: index,
     });
@@ -87,7 +90,7 @@ const CarsList = (cars, currentCar, currentIndex) => {
             type="text"
             className="form-control"
             placeholder="Search by plate"
-            value={searchPlate}
+            value={state.searchPlate}
             onChange={onChangeSearchPlate}
           />
           <div className="input-group-append">
@@ -105,11 +108,11 @@ const CarsList = (cars, currentCar, currentIndex) => {
         <h4>Cars List</h4>
 
         <ul className="list-group">
-          {cars &&
-            cars.map((car, index) => (
+          {state.cars &&
+            state.cars.map((car, index) => (
               <li
                 className={
-                  "list-group-item " + (index === currentIndex ? "active" : "")
+                  "list-group-item " + (index === state.currentIndex ? "active" : "")
                 }
                 onClick={() => setActiveCar(car, index)}
                 key={index}
@@ -124,41 +127,41 @@ const CarsList = (cars, currentCar, currentIndex) => {
         </button>
       </div>
       <div className="col-md-6">
-        {currentCar ? (
+        {state.currentCar ? (
           <div>
             <h4>Car</h4>
             <div>
               <label>
                 <strong>Plate:</strong>
               </label>{" "}
-              {currentCar.plate}
+              {state.currentCar.plate}
             </div>
             <div>
               <label>
                 <strong>Color:</strong>
               </label>{" "}
-              {currentCar.color}
+              {state.currentCar.color}
             </div>
             <div>
               <label>
                 <strong>Model:</strong>
               </label>{" "}
-              {currentCar.model}
+              {state.currentCar.model}
             </div>
             <div>
               <label>
                 <strong>Brand:</strong>
               </label>{" "}
-              {currentCar.brand}
+              {state.currentCar.brand}
             </div>
             <div>
               <label>
                 <strong>Chassis:</strong>
               </label>{" "}
-              {currentCar.chassis}
+              {state.currentCar.chassis}
             </div>
 
-            <Link to={"/cars/" + currentCar.id} className="badge badge-warning">
+            <Link to={"/cars/" + state.currentCar.id} className="badge badge-warning">
               Edit
             </Link>
           </div>

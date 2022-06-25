@@ -10,15 +10,10 @@ export const App = () => {
   return (
     <div>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <Link to={"/cars"} className="navbar-brand">
+        <Link to={"/"} className="navbar-brand">
           Code Challenge
         </Link>
         <div className="navbar-nav mr-auto">
-          <li className="nav-item">
-            <Link to={"/cars"} className="nav-link">
-              Cars
-            </Link>
-          </li>
           <li className="nav-item">
             <Link to={"/add"} className="nav-link">
               Add
@@ -29,9 +24,9 @@ export const App = () => {
 
       <div className="container mt-3">
         <Routes>
-          <Route exact path={["/", "/cars"]} component={CarsList} />
-          <Route exact path="/add" component={AddCar} />
-          <Route path="/cars/:id" component={Car} />
+          <Route exact path="/" element={<CarsList/>} />
+          <Route exact path="/add" element={<AddCar />} />
+          <Route path="/cars/:id" element={<Car/>} />
         </Routes>
       </div>
     </div>

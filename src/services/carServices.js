@@ -10,7 +10,7 @@ class CarDataService {
   }
 
   create(data) {
-    return http.post("/cars", data);
+    return http.post("/add", data);
   }
 
   update(id, data) {

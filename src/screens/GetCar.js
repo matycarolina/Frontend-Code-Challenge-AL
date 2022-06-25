@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CarDataService from "../services/carServices";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const Car = (currentCar) => {
   const [state, setState] = useState({
@@ -13,6 +15,8 @@ const Car = (currentCar) => {
     },
     message: "",
   });
+  let history = useNavigate();
+  let { id } = useParams();
 
   const onChangePlate = (e) => {
     const plate = e.target.value;
@@ -87,7 +91,7 @@ const Car = (currentCar) => {
       });
   };
 
-  //useEffect(() => getCar(this.props.match.params.id));
+  useEffect(() => getCar(id), []);
 
   const updateCar = () => {
     CarDataService.update(state.currentCar.id, state.currentCar)
@@ -102,16 +106,16 @@ const Car = (currentCar) => {
       });
   };
 
-  // const deleteCar = () => {
-  //   CarDataService.delete(state.currentCar.id)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       props.history.push("/cars");
-  //     })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     });
-  // };
+  const deleteCar = () => {
+    CarDataService.delete(state.currentCar.id)
+      .then((response) => {
+        console.log(response.data);
+        history("/");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   return (
     <div>
@@ -172,9 +176,9 @@ const Car = (currentCar) => {
             </div>
           </form>
 
-          {/* <button className="badge badge-danger mr-2" onClick={deleteCar}>
+          <button className="badge badge-danger mr-2" onClick={deleteCar}>
             Delete
-          </button> */}
+          </button>
 
           <button
             type="submit"
