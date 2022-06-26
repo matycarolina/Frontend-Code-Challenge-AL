@@ -2,68 +2,48 @@ import React, { useState } from "react";
 import CarDataService from "../services/carServices";
 
 const AddCar = () => {
-  const [state, setState] = useState({
-    id: null,
-    plate: "",
-    color: "",
-    model: "",
-    brand: "",
-    chassis: "",
-    submitted: false,
-  });
+  const [id, setId] = useState(null)
+  const [plate, setPlate] = useState("")
+  const [color, setColor] = useState("")
+  const [model, setModel] = useState("")
+  const [brand, setBrand] = useState("")
+  const [chassis, setChassis] = useState("")
+  const [submitted, setSubmitted] = useState(false)
 
   const onChangePlate = (e) => {
-    setState({
-      ...state,
-      plate: e.target.value,
-    });
+    setPlate(e.target.value)
   };
   const onChangeColor = (e) => {
-    setState({
-      ...state,
-      color: e.target.value,
-    });
+    setColor(e.target.value)
   };
   const onChangeModel = (e) => {
-    setState({
-      ...state,
-      model: e.target.value,
-    });
+    setModel(e.target.value)
   };
   const onChangeBrand = (e) => {
-    setState({
-      ...state,
-      brand: e.target.value,
-    });
+    setBrand(e.target.value)
   };
   const onChangeChassis = (e) => {
-    setState({
-      ...state,
-      chassis: e.target.value,
-    });
+    setChassis(e.target.value)
   };
 
   const saveCar = () => {
     var data = {
-      plate: state.plate,
-      color: state.color,
-      model: state.model,
-      brand: state.brand,
-      chassis: state.chassis,
+      plate: plate,
+      color: color,
+      model: model,
+      brand: brand,
+      chassis: chassis,
     };
 
     CarDataService.create(data)
       .then((response) => {
-        setState({
-          ...state,
-          id: response.data.id,
-          plate: response.data.plate,
-          color: response.data.color,
-          model: response.data.model,
-          brand: response.data.brand,
-          chassis: response.data.chassis,
-          submitted: true,
-        });
+        setId(response.data.id)
+        setPlate(response.data.plate)
+        setColor(response.data.color)
+        setModel(response.data.model)
+        setBrand(response.data.brand)
+        setChassis(response.data.chassis)
+        setSubmitted(true)
         console.log(response.data);
       })
       .catch((e) => {
@@ -72,21 +52,18 @@ const AddCar = () => {
   };
 
   const newCar = () => {
-    setState({
-      ...state,
-      id: null,
-      plate: "",
-      color: "",
-      model: "",
-      brand: "",
-      chassis: "",
-      submitted: false,
-    });
+    setId(null)
+        setPlate("")
+        setColor("")
+        setModel("")
+        setBrand("")
+        setChassis("")
+        setSubmitted(false)
   };
 
   return (
     <div className="submit-form">
-      {state.submitted ? (
+      {submitted ? (
         <div>
           <h4>You submitted successfully!</h4>
           <button className="btn btn-success" onClick={newCar}>
@@ -102,9 +79,10 @@ const AddCar = () => {
               className="form-control"
               id="plate"
               required
-              value={state.plate}
+              value={plate}
               onChange={onChangePlate}
               name="plate"
+              placeholder="ABC-1234"
             />
           </div>
 
@@ -115,9 +93,10 @@ const AddCar = () => {
               className="form-control"
               id="color"
               required
-              value={state.color}
+              value={color}
               onChange={onChangeColor}
               name="color"
+              placeholder="RED"
             />
           </div>
 
@@ -128,9 +107,10 @@ const AddCar = () => {
               className="form-control"
               id="model"
               required
-              value={state.model}
+              value={model}
               onChange={onChangeModel}
               name="model"
+              placeholder="SEDAN"
             />
           </div>
 
@@ -141,9 +121,10 @@ const AddCar = () => {
               className="form-control"
               id="brand"
               required
-              value={state.brand}
+              value={brand}
               onChange={onChangeBrand}
               name="brand"
+              placeholder="KIA"
             />
           </div>
 
@@ -154,12 +135,13 @@ const AddCar = () => {
               className="form-control"
               id="chassis"
               required
-              value={state.chassis}
+              value={chassis}
               onChange={onChangeChassis}
               name="chassis"
+              placeholder="1HGBH41JXMN109186"
             />
           </div>
-
+<br/>
           <button onClick={saveCar} className="btn btn-success">
             Submit
           </button>

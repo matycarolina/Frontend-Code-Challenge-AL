@@ -3,53 +3,40 @@ import CarDataService from "../services/carServices";
 import { Link } from "react-router-dom";
 
 const CarsList = () => {
-  const [state, setState] = useState({
-    cars: [],
-    currentCar: null,
-    currentIndex: -1,
-    searchPlate: "",
-  });
+  const [searchPlate, setSearchPlate] = useState("");
+
+  const [cars, setCars] = useState([]);
+
+  const [currentCar, setCurrentCar] = useState(null);
+
+  const [currentIndex, setCurrentIndex] = useState(-1);
 
   const onChangeSearchPlate = (e) => {
-    setState({
-      ...state,
-      searchPlate: e.target.value,
-    });
+    setSearchPlate(e.target.value);
   };
 
-  const retrieveCars = useCallback(
-    () => {
-      CarDataService.getAll()
-        .then((response) => {
-          setState({
-            ...state,
-            cars: response.data,
-          });
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        })
-      },
-    []);
+  const retrieveCars = useCallback(() => {
+    CarDataService.getAll()
+      .then((response) => {
+        setCars(response.data);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   useEffect(() => retrieveCars(), [retrieveCars]);
 
   const refreshList = () => {
     retrieveCars();
-    setState({
-      ...state,
-      currentCar: null,
-      currentIndex: -1,
-    });
+    setCurrentCar(null);
+    setCurrentIndex(-1);
   };
 
   const setActiveCar = (car, index) => {
-    setState({
-      ...state,
-      currentCar: car,
-      currentIndex: index,
-    });
+    setCurrentCar(car);
+    setCurrentIndex(index);
   };
 
   const removeAllCars = () => {
@@ -63,18 +50,13 @@ const CarsList = () => {
       });
   };
 
-  const searchPlate = () => {
-    setState({
-      ...state,
-      currentCar: null,
-      currentIndex: -1,
-    });
+  const changeSearchPlate = () => {
+    setCurrentCar(null);
+    setCurrentIndex(-1);
 
-    CarDataService.findCarByPlate(state.searchPlate)
+    CarDataService.findCarByPlate(searchPlate)
       .then((response) => {
-        setState({
-          cars: response.data,
-        });
+        setCars(response.data);
         console.log(response.data);
       })
       .catch((e) => {
@@ -90,14 +72,14 @@ const CarsList = () => {
             type="text"
             className="form-control"
             placeholder="Search by plate"
-            value={state.searchPlate}
+            value={searchPlate}
             onChange={onChangeSearchPlate}
           />
           <div className="input-group-append">
             <button
               className="btn btn-outline-secondary"
               type="button"
-              onClick={searchPlate}
+              onClick={changeSearchPlate}
             >
               Search
             </button>
@@ -108,11 +90,11 @@ const CarsList = () => {
         <h4>Cars List</h4>
 
         <ul className="list-group">
-          {state.cars &&
-            state.cars.map((car, index) => (
+          {cars &&
+            cars.map((car, index) => (
               <li
                 className={
-                  "list-group-item " + (index === state.currentIndex ? "active" : "")
+                  "list-group-item " + (index === currentIndex ? "active" : "")
                 }
                 onClick={() => setActiveCar(car, index)}
                 key={index}
@@ -127,43 +109,39 @@ const CarsList = () => {
         </button>
       </div>
       <div className="col-md-6">
-        {state.currentCar ? (
+        {currentCar ? (
           <div>
             <h4>Car</h4>
             <div>
               <label>
                 <strong>Plate:</strong>
               </label>{" "}
-              {state.currentCar.plate}
+              {currentCar.plate}
             </div>
             <div>
               <label>
                 <strong>Color:</strong>
               </label>{" "}
-              {state.currentCar.color}
+              {currentCar.color}
             </div>
             <div>
               <label>
                 <strong>Model:</strong>
               </label>{" "}
-              {state.currentCar.model}
+              {currentCar.model}
             </div>
             <div>
               <label>
                 <strong>Brand:</strong>
               </label>{" "}
-              {state.currentCar.brand}
+              {currentCar.brand}
             </div>
             <div>
               <label>
                 <strong>Chassis:</strong>
               </label>{" "}
-              {state.currentCar.chassis}
+              {currentCar.chassis}
             </div>
-
-            <Link to={"/cars/" + state.currentCar.id} className="badge badge-warning">
-              Edit
-            </Link>
           </div>
         ) : (
           <div>
