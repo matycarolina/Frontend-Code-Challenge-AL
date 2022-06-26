@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CarDataService from "../services/carServices";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
 
-const Car = (currentCar) => {
-  const [state, setState] = useState({
-    currentCar: {
-      id: null,
-      plate: "",
-      color: "",
-      model: "",
-      brand: "",
-      chassis: "",
-    },
-    message: "",
+const Car = () => {
+  const [message, setMessage] = useState("");
+  const [currentCar, setCurrentCar] = useState({
+    id: null,
+    plate: "",
+    color: "",
+    model: "",
+    brand: "",
+    chassis: "",
   });
   let history = useNavigate();
   let { id } = useParams();
@@ -21,12 +19,10 @@ const Car = (currentCar) => {
   const onChangePlate = (e) => {
     const plate = e.target.value;
 
-    setState(function (prevState) {
+    setCurrentCar(function (prevState) {
       return {
-        currentCar: {
-          ...prevState.currentCar,
-          plate: plate,
-        },
+        ...prevState.currentCar,
+        plate: plate,
       };
     });
   };
@@ -34,23 +30,19 @@ const Car = (currentCar) => {
   const onChangeColor = (e) => {
     const color = e.target.value;
 
-    setState((prevState) => ({
-      currentCar: {
-        ...prevState.currentCar,
-        color: color,
-      },
+    setCurrentCar((prevState) => ({
+      ...prevState.currentCar,
+      color: color,
     }));
   };
 
   const onChangeModel = (e) => {
     const model = e.target.value;
 
-    setState(function (prevState) {
+    setCurrentCar(function (prevState) {
       return {
-        currentCar: {
-          ...prevState.currentCar,
-          model: model,
-        },
+        ...prevState.currentCar,
+        model: model,
       };
     });
   };
@@ -58,64 +50,34 @@ const Car = (currentCar) => {
   const onChangeBrand = (e) => {
     const brand = e.target.value;
 
-    setState((prevState) => ({
-      currentCar: {
-        ...prevState.currentCar,
-        brand: brand,
-      },
+    setCurrentCar((prevState) => ({
+      ...prevState.currentCar,
+      brand: brand,
     }));
   };
   const onChangeChassis = (e) => {
     const chassis = e.target.value;
 
-    setState(function (prevState) {
+    setCurrentCar(function (prevState) {
       return {
-        currentCar: {
-          ...prevState.currentCar,
-          chassis: chassis,
-        },
+        ...prevState.currentCar,
+        chassis: chassis,
       };
     });
   };
 
-  const getCar = (id) => {
+  const getCar = useCallback((id) => {
     CarDataService.get(id)
       .then((response) => {
-        setState({
-          currentCar: response.data,
-        });
+        setCurrentCar(response.data);
         console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
       });
-  };
+  }, []);
 
   useEffect(() => getCar(id), []);
-
-  const updateCar = () => {
-    CarDataService.update(state.currentCar.id, state.currentCar)
-      .then((response) => {
-        console.log(response.data);
-        setState({
-          message: "The car was updated successfully!",
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const deleteCar = () => {
-    CarDataService.delete(state.currentCar.id)
-      .then((response) => {
-        console.log(response.data);
-        history("/");
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
 
   return (
     <div>
@@ -175,20 +137,7 @@ const Car = (currentCar) => {
               />
             </div>
           </form>
-
-          <button className="badge badge-danger mr-2" onClick={deleteCar}>
-            Delete
-          </button>
-
-          <button
-            type="submit"
-            className="badge badge-success"
-            onClick={updateCar}
-          >
-            Update
-          </button>
-          <p>{state.message}</p>
-        </div>
+          </div>
       ) : (
         <div>
           <br />
