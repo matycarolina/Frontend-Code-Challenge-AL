@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:alpine
+    hostname: postgres-local
+    container_name: postgres-adv-latam
+    environment:
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432
+    networks:
+      - localnet
+  backend:
+    image: mariale031296/docker-core-app:latest
+    hostname: docker-core-app-local
+    container_name: core-app
+    environment:
+      - POSTGRES_HOSTNAME=postgres-local
+      - POSTGRES_PORT=5432
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DATABASE=postgres
+    ports:
+      - 3000:8080
+    depends_on:
+      - postgres
+    networks:
+      - localnet
+  frontend:
+    image: mariale031296/docker-front-app:latest
+    hostname: docker-front-app-local
+    container_name: front-app
+    environment:
+      - REACT_APP_HOSTNAME_BACKEND=docker-core-app-local
+      - REACT_APP_PORT_BACKEND=3000
+      - WDS_SOCKET_PORT=0
+    ports:
+      - 5000:3000
+    depends_on:
+      - backend
+    networks:
+      - localnet
+networks:
+  localnet:
+    name: local-net
